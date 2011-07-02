@@ -2,11 +2,12 @@ package org.bukkit.entity;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.Permissable;
 
 /**
  * Represents a human entity, such as an NPC or a player
  */
-public interface HumanEntity extends LivingEntity, AnimalTamer {
+public interface HumanEntity extends LivingEntity, AnimalTamer, Permissable {
 
     /**
      * Returns the name of this player

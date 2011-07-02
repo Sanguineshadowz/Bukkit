@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import org.bukkit.Server;
 import java.util.regex.Pattern;
+import javax.management.openmbean.KeyAlreadyExistsException;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.command.SimpleCommandMap;
@@ -25,6 +26,7 @@ import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Listener;
+import org.bukkit.permissions.Permission;
 
 import org.bukkit.util.FileUtil;
 
@@ -39,6 +41,7 @@ public final class SimplePluginManager implements PluginManager {
     private final Map<Event.Type, SortedSet<RegisteredListener>> listeners = new EnumMap<Event.Type, SortedSet<RegisteredListener>>(Event.Type.class);
     private static File updateDirectory = null;
     private final SimpleCommandMap commandMap;
+    private final Map<String, Permission> permissions = new HashMap<String, Permission>();
     private final Comparator<RegisteredListener> comparer = new Comparator<RegisteredListener>() {
         public int compare(RegisteredListener i, RegisteredListener j) {
             int result = i.getPriority().compareTo(j.getPriority());
@@ -393,5 +396,19 @@ public final class SimplePluginManager implements PluginManager {
         eventListeners = new TreeSet<RegisteredListener>(comparer);
         listeners.put(type, eventListeners);
         return eventListeners;
+    }
+
+    public Permission getPermission(String name) {
+        return permissions.get(name.toLowerCase());
+    }
+
+    public void addPermission(Permission perm) {
+        String name = perm.getName().toLowerCase();
+
+        if (permissions.containsKey(name)) {
+            throw new KeyAlreadyExistsException("The permission " + name + " is already defined!");
+        }
+
+        permissions.put(name, perm);
     }
 }
