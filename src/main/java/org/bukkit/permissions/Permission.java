@@ -4,12 +4,12 @@ package org.bukkit.permissions;
 import org.bukkit.Bukkit;
 
 /**
- * Represents a unique permission that may be attached to a {@link Permissable}
+ * Represents a unique permission that may be attached to a {@link Permissible}
  */
 public class Permission {
     private final String name;
     private final String[] children;
-    private Boolean defaultValue;
+    private boolean defaultValue;
 
     public Permission(String name) {
         this(name, new String[0]);
@@ -58,7 +58,7 @@ public class Permission {
      *
      * @return Default value of this permission.
      */
-    public Boolean getDefault() {
+    public boolean getDefault() {
         return defaultValue;
     }
 }
