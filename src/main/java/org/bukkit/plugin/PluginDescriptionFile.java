@@ -308,24 +308,10 @@ public final class PluginDescriptionFile {
 
         for (String name : keys) {
             try {
-                permissions.add(loadPermission(name, perms.get(name)));
+                permissions.add(Permission.loadPermission(name, perms.get(name)));
             } catch (Throwable ex) {
                 Bukkit.getServer().getLogger().log(Level.SEVERE, "Permission node '" + name + "' in plugin description file for " + getFullName() + " is invalid", ex);
             }
         }
-    }
-
-    private Permission loadPermission(String name, Map<String, Object> data) {
-        Permission result = new Permission(name);
-
-        if (data.containsKey("default")) {
-            result.setDefault((Boolean)data.get("default"));
-        }
-
-        if (data.containsKey("children")) {
-            result.getChildren().putAll((Map<String, Boolean>)data.get("children"));
-        }
-
-        return result;
     }
 }
