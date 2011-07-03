@@ -99,7 +99,7 @@ public class Permission {
             throw new IllegalArgumentException("Name cannot be null");
         }
         if (data == null) {
-            throw new IllegalArgumentException("Name cannot be null");
+            throw new IllegalArgumentException("Data cannot be null");
         }
 
         Permission result = new Permission(name);
