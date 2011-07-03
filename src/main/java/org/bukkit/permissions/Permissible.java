@@ -1,6 +1,8 @@
 
 package org.bukkit.permissions;
 
+import org.bukkit.plugin.Plugin;
+
 /**
  * Represents an object that may be assigned permissions
  */
@@ -19,7 +21,7 @@ public interface Permissible {
      * @param perm Permission to check
      * @return true if the permission is set, otherwise false
      */
-    public boolean isPermissionSet(Permission name);
+    public boolean isPermissionSet(Permission perm);
 
     /**
      * Gets the value of the specified permission, if set.
@@ -39,7 +41,7 @@ public interface Permissible {
      * @param perm Permission to get
      * @return Value of the permission
      */
-    public boolean hasPermission(Permission name);
+    public boolean hasPermission(Permission perm);
 
     /**
      * Adds a new {@link PermissionAttachment} with a single permission by name and value
@@ -57,6 +59,27 @@ public interface Permissible {
      * @return The PermissionAttachment that was just created
      */
     public PermissionAttachment addAttachment();
+
+    /**
+     * Temporarily adds a new {@link PermissionAttachment} with a single permission by name and value
+     *
+     * @param name Name of the permission to attach
+     * @param value Value of the permission
+     * @param plugin Plugin for use in the scheduler
+     * @param ticks Amount of ticks to automatically remove this attachment after
+     *
+     * @return The PermissionAttachment that was just created
+     */
+    public PermissionAttachment addAttachment(String name, boolean value, Plugin plugin, int ticks);
+
+    /**
+     * Temporarily adds a new empty {@link PermissionAttachment} to this object
+     *
+     * @param plugin Plugin for use in the scheduler
+     * @param ticks Amount of ticks to automatically remove this attachment after
+     * @return The PermissionAttachment that was just created
+     */
+    public PermissionAttachment addAttachment(Plugin plugin, int ticks);
 
     /**
      * Removes the given {@link PermissionAttachment} from this object

@@ -10,10 +10,10 @@ import java.util.TreeMap;
 public class PermissionAttachment {
     private PermissionRemovedExecutor removed;
     private final TreeMap<String, Boolean> permissions = new TreeMap<String, Boolean>();
-    private final Permissible Permissible;
+    private final Permissible permissible;
 
     public PermissionAttachment(Permissible Permissible) {
-        this.Permissible = Permissible;
+        this.permissible = Permissible;
     }
 
     /**
@@ -40,7 +40,7 @@ public class PermissionAttachment {
      * @return Permissible containing this attachment
      */
     public Permissible getPermissible() {
-        return Permissible;
+        return permissible;
     }
 
     /**
@@ -62,7 +62,7 @@ public class PermissionAttachment {
      */
     public void setPermission(String name, boolean value) {
         permissions.put(name.toLowerCase(), value);
-        Permissible.recalculatePermissions();
+        permissible.recalculatePermissions();
     }
 
     /**
@@ -73,7 +73,7 @@ public class PermissionAttachment {
      */
     public void setPermission(Permission perm, boolean value) {
         setPermission(perm.getName(), value);
-        Permissible.recalculatePermissions();
+        permissible.recalculatePermissions();
     }
 
     /**
@@ -85,7 +85,7 @@ public class PermissionAttachment {
      */
     public void unsetPermission(String name) {
         permissions.remove(name.toLowerCase());
-        Permissible.recalculatePermissions();
+        permissible.recalculatePermissions();
     }
 
     /**
@@ -97,6 +97,20 @@ public class PermissionAttachment {
      */
     public void unsetPermission(Permission perm) {
         unsetPermission(perm.getName());
-        Permissible.recalculatePermissions();
+        permissible.recalculatePermissions();
+    }
+
+    /**
+     * Removes this attachment from its registered {@link Permissible}
+     *
+     * @return true if the permissible was removed successfully, false if it did not exist
+     */
+    public boolean remove() {
+        try {
+            permissible.removeAttachment(this);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
 }
