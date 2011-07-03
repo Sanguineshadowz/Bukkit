@@ -3,9 +3,14 @@ package org.bukkit.plugin;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -25,6 +30,7 @@ public final class PluginDescriptionFile {
     private String website = null;
     private boolean database = false;
     private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
+    private ArrayList<Permission> permissions = new ArrayList<Permission>();
 
     @SuppressWarnings("unchecked")
     public PluginDescriptionFile(final InputStream stream) throws InvalidDescriptionException {
@@ -138,6 +144,10 @@ public final class PluginDescriptionFile {
         this.database = database;
     }
 
+    public ArrayList<Permission> getPermissions() {
+        return permissions;
+    }
+
     private void loadMap(Map<String, Object> map) throws InvalidDescriptionException {
         try {
             name = map.get("name").toString();
@@ -247,6 +257,16 @@ public final class PluginDescriptionFile {
                 throw new InvalidDescriptionException(ex, "authors are of wrong type");
             }
         }
+
+        if (map.containsKey("permissions")) {
+            try {
+                 Map<String, Map<String, Object>> perms = (Map<String, Map<String, Object>>) map.get("permissions");
+
+                 loadPermissions(perms);
+            } catch (ClassCastException ex) {
+                throw new InvalidDescriptionException(ex, "permissions are of wrong type");
+            }
+        }
     }
 
     private Map<String, Object> saveMap() {
@@ -281,5 +301,31 @@ public final class PluginDescriptionFile {
         }
 
         return map;
+    }
+
+    private void loadPermissions(Map<String, Map<String, Object>> perms) {
+        Set<String> keys = perms.keySet();
+
+        for (String name : keys) {
+            try {
+                permissions.add(loadPermission(name, perms.get(name)));
+            } catch (Throwable ex) {
+                Bukkit.getServer().getLogger().log(Level.SEVERE, "Permission node '" + name + "' in plugin description file for " + getFullName() + " is invalid", ex);
+            }
+        }
+    }
+
+    private Permission loadPermission(String name, Map<String, Object> data) {
+        Permission result = new Permission(name);
+
+        if (data.containsKey("default")) {
+            result.setDefault((Boolean)data.get("default"));
+        }
+
+        if (data.containsKey("children")) {
+            result.getChildren().putAll((Map<String, Boolean>)data.get("children"));
+        }
+
+        return result;
     }
 }

@@ -3,7 +3,6 @@ package org.bukkit.permissions;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.Bukkit;
 
 /**
  * Represents a unique permission that may be attached to a {@link Permissible}
@@ -43,11 +42,20 @@ public class Permission {
     }
 
     /**
-     * Gets the default value of this permission. This may be null.
+     * Gets the default value of this permission.
      *
      * @return Default value of this permission.
      */
     public boolean getDefault() {
         return defaultValue;
+    }
+
+    /**
+     * Sets the default value for this permission.
+     *
+     * @param value New default value
+     */
+    public void setDefault(boolean value) {
+        this.defaultValue = value;
     }
 }

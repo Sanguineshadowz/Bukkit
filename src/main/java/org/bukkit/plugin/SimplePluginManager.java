@@ -306,6 +306,7 @@ public final class SimplePluginManager implements PluginManager {
             lookupNames.clear();
             listeners.clear();
             fileAssociations.clear();
+            permissions.clear();
         }
     }
 
@@ -406,7 +407,7 @@ public final class SimplePluginManager implements PluginManager {
         String name = perm.getName().toLowerCase();
 
         if (permissions.containsKey(name)) {
-            throw new KeyAlreadyExistsException("The permission " + name + " is already defined!");
+            throw new IllegalArgumentException("The permission " + name + " is already defined!");
         }
 
         permissions.put(name, perm);

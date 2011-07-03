@@ -148,7 +148,7 @@ public interface PluginManager {
      * an exception will be thrown.
      *
      * @param perm Permission to add
-     * @throws KeyAlreadyExistsException Thrown when a permission with the same name already exists
+     * @throws IllegalArgumentException Thrown when a permission with the same name already exists
      */
     public void addPermission(Permission perm);
 }
