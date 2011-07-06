@@ -3,6 +3,7 @@ package org.bukkit.permissions;
 
 import java.util.Map;
 import java.util.TreeMap;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Holds information about a permission attachment on a {@link Permissible} object
@@ -11,9 +12,26 @@ public class PermissionAttachment {
     private PermissionRemovedExecutor removed;
     private final TreeMap<String, Boolean> permissions = new TreeMap<String, Boolean>();
     private final Permissible permissible;
+    private final Plugin plugin;
 
-    public PermissionAttachment(Permissible Permissible) {
+    public PermissionAttachment(Plugin plugin, Permissible Permissible) {
+        if (plugin == null) {
+            throw new IllegalArgumentException("Plugin cannot be null");
+        } else if (!plugin.isEnabled()) {
+            throw new IllegalArgumentException("Plugin " + plugin.getDescription().getFullName() + " is disabled");
+        }
+
         this.permissible = Permissible;
+        this.plugin = plugin;
+    }
+
+    /**
+     * Gets the plugin responsible for this attachment
+     *
+     * @return Plugin responsible for this permission attachment
+     */
+    public Plugin getPlugin() {
+        return plugin;
     }
 
     /**

@@ -46,36 +46,36 @@ public interface Permissible {
     /**
      * Adds a new {@link PermissionAttachment} with a single permission by name and value
      *
+     * @param plugin Plugin responsible for this attachment, may not be null or disabled
      * @param name Name of the permission to attach
      * @param value Value of the permission
-     *
      * @return The PermissionAttachment that was just created
      */
-    public PermissionAttachment addAttachment(String name, boolean value);
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value);
 
     /**
      * Adds a new empty {@link PermissionAttachment} to this object
      *
+     * @param plugin Plugin responsible for this attachment, may not be null or disabled
      * @return The PermissionAttachment that was just created
      */
-    public PermissionAttachment addAttachment();
+    public PermissionAttachment addAttachment(Plugin plugin);
 
     /**
      * Temporarily adds a new {@link PermissionAttachment} with a single permission by name and value
      *
+     * @param plugin Plugin responsible for this attachment, may not be null or disabled
      * @param name Name of the permission to attach
      * @param value Value of the permission
-     * @param plugin Plugin for use in the scheduler
      * @param ticks Amount of ticks to automatically remove this attachment after
-     *
      * @return The PermissionAttachment that was just created
      */
-    public PermissionAttachment addAttachment(String name, boolean value, Plugin plugin, int ticks);
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks);
 
     /**
      * Temporarily adds a new empty {@link PermissionAttachment} to this object
      *
-     * @param plugin Plugin for use in the scheduler
+     * @param plugin Plugin responsible for this attachment, may not be null or disabled
      * @param ticks Amount of ticks to automatically remove this attachment after
      * @return The PermissionAttachment that was just created
      */
