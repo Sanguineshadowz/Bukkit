@@ -10,7 +10,7 @@ import java.util.Map;
 public class Permission {
     private final String name;
     private final Map<String, Boolean> children = new HashMap<String, Boolean>();
-    private boolean defaultValue;
+    private PermissionDefault defaultValue;
     private String description;
 
     public Permission(String name) {
@@ -47,7 +47,7 @@ public class Permission {
      *
      * @return Default value of this permission.
      */
-    public boolean getDefault() {
+    public PermissionDefault getDefault() {
         return defaultValue;
     }
 
@@ -56,7 +56,7 @@ public class Permission {
      *
      * @param value New default value
      */
-    public void setDefault(boolean value) {
+    public void setDefault(PermissionDefault value) {
         this.defaultValue = value;
     }
 
@@ -104,10 +104,14 @@ public class Permission {
 
         Permission result = new Permission(name);
 
-
         if (data.containsKey("default")) {
             try {
-                result.setDefault((Boolean)data.get("default"));
+                PermissionDefault value = PermissionDefault.getByName(data.get("default").toString());
+                if (value != null) {
+                    result.setDefault(value);
+                } else {
+                    throw new IllegalArgumentException("'default' key contained unknown value");
+                }
             } catch (ClassCastException ex) {
                 throw new IllegalArgumentException("'default' key is of wrong type", ex);
             }
