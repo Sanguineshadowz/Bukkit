@@ -1,6 +1,7 @@
 
 package org.bukkit.permissions;
 
+import java.util.Set;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -95,4 +96,11 @@ public interface Permissible extends ServerOperator {
      * This should very rarely need to be called from a plugin.
      */
     public void recalculatePermissions();
+
+    /**
+     * Gets a set containing all of the permissions currently in effect by this object
+     *
+     * @return Set of currently effective permissions
+     */
+    public Set<PermissionAttachmentInfo> getEffectivePermissions();
 }

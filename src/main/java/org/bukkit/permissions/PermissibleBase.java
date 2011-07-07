@@ -1,6 +1,7 @@
 package org.bukkit.permissions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ import org.bukkit.plugin.Plugin;
 public class PermissibleBase implements Permissible {
     private ServerOperator opable = null;
     private final List<PermissionAttachment> attachments = new LinkedList<PermissionAttachment>();
-    private final Map<String, Boolean> permissions = new HashMap<String, Boolean>();
+    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<String, PermissionAttachmentInfo>();
     private boolean dirtyPermissions = true;
 
     public PermissibleBase(ServerOperator opable) {
@@ -66,7 +67,7 @@ public class PermissibleBase implements Permissible {
         String name = inName.toLowerCase();
 
         if (isPermissionSet(name)) {
-            return permissions.get(name);
+            return permissions.get(name).getValue();
         } else {
             Permission perm = Bukkit.getServer().getPluginManager().getPermission(name);
 
@@ -88,7 +89,7 @@ public class PermissibleBase implements Permissible {
         String name = perm.getName().toLowerCase();
 
         if (isPermissionSet(name)) {
-            return permissions.get(name);
+            return permissions.get(name).getValue();
         } else if (perm != null) {
             return perm.getDefault().getValue(isOp());
         } else {
@@ -157,29 +158,31 @@ public class PermissibleBase implements Permissible {
             Set<Permission> defaults = Bukkit.getServer().getPluginManager().getDefaultPermissions(isOp());
 
             for (Permission perm : defaults) {
-                permissions.put(perm.getName().toLowerCase(), true);
-                calculateChildPermissions(perm.getChildren(), false);
+                String name = perm.getName().toLowerCase();
+                permissions.put(name, new PermissionAttachmentInfo(this, name, null, true));
+                calculateChildPermissions(perm.getChildren(), false, null);
             }
 
             for (PermissionAttachment attachment : attachments) {
-                calculateChildPermissions(attachment.getPermissions(), false);
+                calculateChildPermissions(attachment.getPermissions(), false, attachment);
             }
 
             dirtyPermissions = false;
         }
     }
 
-    private void calculateChildPermissions(Map<String, Boolean> children, boolean invert) {
+    private void calculateChildPermissions(Map<String, Boolean> children, boolean invert, PermissionAttachment attachment) {
         Set<String> keys = children.keySet();
 
         for (String name : keys) {
             Permission perm = Bukkit.getServer().getPluginManager().getPermission(name);
             boolean value = children.get(name) ^ invert;
+            String lname = name.toLowerCase();
 
-            permissions.put(name.toLowerCase(), value);
+            permissions.put(lname, new PermissionAttachmentInfo(this, lname, attachment, value));
 
             if (perm != null) {
-                calculateChildPermissions(perm.getChildren(), !value);
+                calculateChildPermissions(perm.getChildren(), !value, attachment);
             }
         }
     }
@@ -218,6 +221,10 @@ public class PermissibleBase implements Permissible {
         } else {
             return result;
         }
+    }
+
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+        return new HashSet<PermissionAttachmentInfo>(permissions.values());
     }
 
     private class RemoveAttachmentRunnable implements Runnable {
