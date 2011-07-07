@@ -154,25 +154,32 @@ public class PermissibleBase implements Permissible {
     private synchronized void calculatePermissions() {
         if (dirtyPermissions) {
             permissions.clear();
+            Set<Permission> defaults = Bukkit.getServer().getPluginManager().getDefaultPermissions(isOp());
+
+            for (Permission perm : defaults) {
+                permissions.put(perm.getName().toLowerCase(), true);
+                calculateChildPermissions(perm.getChildren(), false);
+            }
 
             for (PermissionAttachment attachment : attachments) {
-                calculateChildPermissions(attachment.getPermissions());
+                calculateChildPermissions(attachment.getPermissions(), false);
             }
 
             dirtyPermissions = false;
         }
     }
 
-    private void calculateChildPermissions(Map<String, Boolean> children) {
+    private void calculateChildPermissions(Map<String, Boolean> children, boolean invert) {
         Set<String> keys = children.keySet();
 
         for (String name : keys) {
             Permission perm = Bukkit.getServer().getPluginManager().getPermission(name);
+            boolean value = children.get(name) ^ invert;
 
-            permissions.put(name.toLowerCase(), children.get(name));
+            permissions.put(name.toLowerCase(), value);
 
             if (perm != null) {
-                calculateChildPermissions(perm.getChildren());
+                calculateChildPermissions(perm.getChildren(), !value);
             }
         }
     }

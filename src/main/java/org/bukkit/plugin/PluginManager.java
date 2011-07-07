@@ -1,7 +1,7 @@
 package org.bukkit.plugin;
 
 import java.io.File;
-import javax.management.openmbean.KeyAlreadyExistsException;
+import java.util.Set;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -151,4 +151,11 @@ public interface PluginManager {
      * @throws IllegalArgumentException Thrown when a permission with the same name already exists
      */
     public void addPermission(Permission perm);
+
+    /**
+     * Gets the default permissions for the given op status
+     *
+     * @param op Which set of default permissions to get
+     */
+    public Set<Permission> getDefaultPermissions(boolean op);
 }

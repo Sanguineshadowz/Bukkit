@@ -3,7 +3,6 @@ package org.bukkit.plugin;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;

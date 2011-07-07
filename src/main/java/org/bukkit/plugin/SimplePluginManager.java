@@ -12,13 +12,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import org.bukkit.Server;
 import java.util.regex.Pattern;
-import javax.management.openmbean.KeyAlreadyExistsException;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.command.SimpleCommandMap;
@@ -42,6 +43,7 @@ public final class SimplePluginManager implements PluginManager {
     private static File updateDirectory = null;
     private final SimpleCommandMap commandMap;
     private final Map<String, Permission> permissions = new HashMap<String, Permission>();
+    private final Map<Boolean, Set<Permission>> defaultPerms = new LinkedHashMap<Boolean, Set<Permission>>();
     private final Comparator<RegisteredListener> comparer = new Comparator<RegisteredListener>() {
         public int compare(RegisteredListener i, RegisteredListener j) {
             int result = i.getPriority().compareTo(j.getPriority());
@@ -57,6 +59,9 @@ public final class SimplePluginManager implements PluginManager {
     public SimplePluginManager(Server instance, SimpleCommandMap commandMap) {
         server = instance;
         this.commandMap = commandMap;
+
+        defaultPerms.put(true, new HashSet<Permission>());
+        defaultPerms.put(false, new HashSet<Permission>());
     }
 
     /**
@@ -307,6 +312,8 @@ public final class SimplePluginManager implements PluginManager {
             listeners.clear();
             fileAssociations.clear();
             permissions.clear();
+            defaultPerms.get(true).clear();
+            defaultPerms.get(false).clear();
         }
     }
 
@@ -411,5 +418,22 @@ public final class SimplePluginManager implements PluginManager {
         }
 
         permissions.put(name, perm);
+
+        switch (perm.getDefault()) {
+            case TRUE:
+                defaultPerms.get(true).add(perm);
+                defaultPerms.get(false).add(perm);
+                break;
+            case OP:
+                defaultPerms.get(true).add(perm);
+                break;
+            case NOT_OP:
+                defaultPerms.get(false).add(perm);
+                break;
+        }
+    }
+
+    public Set<Permission> getDefaultPermissions(boolean op) {
+        return defaultPerms.get(op);
     }
 }

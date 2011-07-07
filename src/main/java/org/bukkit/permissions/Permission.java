@@ -1,7 +1,7 @@
 
 package org.bukkit.permissions;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class Permission {
     private final String name;
-    private final Map<String, Boolean> children = new HashMap<String, Boolean>();
+    private final Map<String, Boolean> children = new LinkedHashMap<String, Boolean>();
     private PermissionDefault defaultValue = PermissionDefault.FALSE;
     private String description;
 
