@@ -419,17 +419,19 @@ public final class SimplePluginManager implements PluginManager {
 
         permissions.put(name, perm);
 
-        switch (perm.getDefault()) {
-            case TRUE:
-                defaultPerms.get(true).add(perm);
-                defaultPerms.get(false).add(perm);
-                break;
-            case OP:
-                defaultPerms.get(true).add(perm);
-                break;
-            case NOT_OP:
-                defaultPerms.get(false).add(perm);
-                break;
+        if (!perm.getChildren().isEmpty()) {
+            switch (perm.getDefault()) {
+                case TRUE:
+                    defaultPerms.get(true).add(perm);
+                    defaultPerms.get(false).add(perm);
+                    break;
+                case OP:
+                    defaultPerms.get(true).add(perm);
+                    break;
+                case NOT_OP:
+                    defaultPerms.get(false).add(perm);
+                    break;
+            }
         }
     }
 

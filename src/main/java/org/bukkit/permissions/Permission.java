@@ -14,12 +14,41 @@ public class Permission {
     private String description;
 
     public Permission(String name) {
-        this.name = name.toLowerCase();
+        this(name, null, null, null);
+    }
+
+    public Permission(String name, String description) {
+        this(name, description, null, null);
+    }
+
+    public Permission(String name, PermissionDefault defaultValue) {
+        this(name, null, defaultValue, null);
+    }
+
+    public Permission(String name, String description, PermissionDefault defaultValue) {
+        this(name, description, defaultValue, null);
     }
 
     public Permission(String name, Map<String, Boolean> children) {
-        this(name);
-        this.children.putAll(children);
+        this(name, null, null, children);
+    }
+
+    public Permission(String name, String description, Map<String, Boolean> children) {
+        this(name, description, null, children);
+    }
+
+    public Permission(String name, PermissionDefault defaultValue, Map<String, Boolean> children) {
+        this(name, null, defaultValue, children);
+    }
+
+    public Permission(String name, String description, PermissionDefault defaultValue, Map<String, Boolean> children) {
+        this.name = name;
+        this.description = (description == null) ? "" : description;
+        this.defaultValue = (defaultValue == null) ? defaultValue.FALSE : defaultValue;
+        
+        if (children != null) {
+            this.children.putAll(children);
+        }
     }
 
     /**
@@ -34,12 +63,12 @@ public class Permission {
     /**
      * Gets the children of this permission.
      *
-     * If you adjust this map, you must call {@link Permissible#recalculatePermissions()} on any {@link Permissible} objects that contain this permission!
+     * This is a copy and changes will not be saved.
      *
      * @return Permission children
      */
     public Map<String, Boolean> getChildren() {
-        return children;
+        return new LinkedHashMap<String, Boolean>(children);
     }
 
     /**
@@ -52,34 +81,12 @@ public class Permission {
     }
 
     /**
-     * Sets the default value for this permission.
-     *
-     * @param value New default value
-     */
-    public void setDefault(PermissionDefault value) {
-        this.defaultValue = value;
-    }
-
-    /**
      * Gets a brief description of this permission, if set
      *
      * @return Brief description of this permission
      */
     public String getDescription() {
         return description;
-    }
-
-    /**
-     * Sets the brief description of this permission.
-     * 
-     * @param value New description
-     */
-    public void setDescription(String value) {
-        if (value == null) {
-            this.description = "";
-        } else {
-            this.description = value;
-        }
     }
 
     /**
@@ -101,14 +108,15 @@ public class Permission {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null");
         }
-
-        Permission result = new Permission(name);
+        String desc = null;
+        PermissionDefault def = null;
+        Map<String, Boolean> children = null;
 
         if (data.containsKey("default")) {
             try {
                 PermissionDefault value = PermissionDefault.getByName(data.get("default").toString());
                 if (value != null) {
-                    result.setDefault(value);
+                    def = value;
                 } else {
                     throw new IllegalArgumentException("'default' key contained unknown value");
                 }
@@ -119,7 +127,7 @@ public class Permission {
 
         if (data.containsKey("children")) {
             try {
-                result.getChildren().putAll((Map<String, Boolean>)data.get("children"));
+                children = (Map<String, Boolean>)data.get("children");
             } catch (ClassCastException ex) {
                 throw new IllegalArgumentException("'children' key is of wrong type", ex);
             }
@@ -127,12 +135,12 @@ public class Permission {
 
         if (data.containsKey("description")) {
             try {
-                result.setDescription((String)data.get("description"));
+                desc = (String)data.get("description");
             } catch (ClassCastException ex) {
                 throw new IllegalArgumentException("'description' key is of wrong type", ex);
             }
         }
 
-        return result;
+        return new Permission(name, desc, def, children);
     }
 }
