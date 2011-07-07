@@ -10,7 +10,7 @@ import java.util.Map;
 public class Permission {
     private final String name;
     private final Map<String, Boolean> children = new HashMap<String, Boolean>();
-    private PermissionDefault defaultValue;
+    private PermissionDefault defaultValue = PermissionDefault.FALSE;
     private String description;
 
     public Permission(String name) {
